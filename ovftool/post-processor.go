@@ -3,9 +3,9 @@ package ovftool
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	vmwcommon "github.com/mitchellh/packer/builder/vmware/common"
 	"github.com/mitchellh/packer/common"
+	"github.com/mitchellh/packer/template/interpolate"
 	"github.com/mitchellh/packer/packer"
 	"os/exec"
 	"strings"
@@ -18,7 +18,7 @@ type Config struct {
 	TargetPath          string `mapstructure:"target"`
 	TargetType          string `mapstructure:"format"`
 	Compression         uint   `mapstructure:"compression"`
-	tpl                 *packer.ConfigTemplate
+	ctx interpolate.Context
 }
 
 type OVFPostProcessor struct {
@@ -36,11 +36,6 @@ func (p *OVFPostProcessor) Configure(raws ...interface{}) error {
 	if err != nil {
 		return err
 	}
-	p.cfg.tpl, err = packer.NewConfigTemplate()
-	if err != nil {
-		return err
-	}
-	p.cfg.tpl.UserVars = p.cfg.PackerUserVars
 
 	if p.cfg.TargetType == "" {
 		p.cfg.TargetType = "ovf"
@@ -59,11 +54,6 @@ func (p *OVFPostProcessor) Configure(raws ...interface{}) error {
 	if err != nil {
 		errs = packer.MultiErrorAppend(
 			errs, fmt.Errorf("Error: Could not find ovftool executable: %s", err))
-	}
-
-	if err = p.cfg.tpl.Validate(p.cfg.TargetPath); err != nil {
-		errs = packer.MultiErrorAppend(
-			errs, fmt.Errorf("Error parsing target template: %s", err))
 	}
 
 	if !(p.cfg.TargetType == "ovf" || p.cfg.TargetType == "ova") {
