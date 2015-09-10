@@ -31,11 +31,6 @@ type OutputPathTemplate struct {
 	Provider   string
 }
 
-func (p *OVFPostProcessor) Configure(raws ...interface{}) error {
-	_, err := common.DecodeConfig(&p.cfg, raws...)
-	if err != nil {
-		return err
-	}
 
 	if p.cfg.TargetType == "" {
 		p.cfg.TargetType = "ovf"
