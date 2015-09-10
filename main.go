@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/iancmcc/packer-post-processor-ovftool/ovftool"
+	"github.com/bazzaware/packer-post-processor-tool-ovf"
 	"github.com/mitchellh/packer/packer/plugin"
 )
 
